@@ -1,5 +1,5 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"
 
 const appSettings = {
   databaseURL: 'https://db-test-bdcbe-default-rtdb.firebaseio.com/'
@@ -14,13 +14,28 @@ const inputVal = document.getElementById('input-field');
 const btn = document.getElementById('add-button');
 
 const list = document.getElementById("shopping-list");
-const li = document.createElement('li');
+
+onValue(items, function(snapshot) {
+  let itemArr = Object.values(snapshot.val());
+  list.innerHTML = '';
+
+  for (let i = 0; i < itemArr.length; i++) {
+    addItem(itemArr[i]);
+  }
+})
+
+function clear() {
+  inputVal.value = '';
+}
 
 
 btn.addEventListener('click', () => {
-  li.textContent = inputVal.value;
-  list.appendChild(li);
+
   push(items, inputVal.value);
 
-  inputVal.value = '';
+  clear()
 })
+
+function addItem(itemValue) {
+  list.innerHTML += `<li>${itemValue}</li>`;
+}
