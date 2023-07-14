@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"
-import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"
 
 const appSettings = {
   databaseURL: 'https://db-test-bdcbe-default-rtdb.firebaseio.com/'
@@ -16,11 +16,14 @@ const btn = document.getElementById('add-button');
 const list = document.getElementById("shopping-list");
 
 onValue(items, function(snapshot) {
-  let itemArr = Object.values(snapshot.val());
+  let itemArr = Object.entries(snapshot.val());
   list.innerHTML = '';
 
   for (let i = 0; i < itemArr.length; i++) {
-    addItem(itemArr[i]);
+    let currentItem = itemArr[i];
+    let currentID = currentItem[0];
+    let currentVal = currentItem[1];
+    addItem(currentItem);
   }
 })
 
@@ -36,6 +39,16 @@ btn.addEventListener('click', () => {
   clear()
 })
 
-function addItem(itemValue) {
-  list.innerHTML += `<li>${itemValue}</li>`;
+function addItem(item) {
+  // list.innerHTML += `<li>${itemValue}</li>`;
+  let itemID = item[0]
+  let li = document.createElement('li');
+  li.textContent = item[1];
+
+  li.addEventListener('click', () => {
+    let ID = ref(database, `groceries/${itemID}`);
+    remove(ID);
+  })
+
+  list.append(li);
 }
