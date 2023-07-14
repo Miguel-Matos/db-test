@@ -15,17 +15,25 @@ const btn = document.getElementById('add-button');
 
 const list = document.getElementById("shopping-list");
 
-onValue(items, function(snapshot) {
-  let itemArr = Object.entries(snapshot.val());
-  list.innerHTML = '';
 
-  for (let i = 0; i < itemArr.length; i++) {
-    let currentItem = itemArr[i];
-    let currentID = currentItem[0];
-    let currentVal = currentItem[1];
-    addItem(currentItem);
+
+onValue(items, function(snapshot) {
+  if (snapshot.exists()) {
+    let itemArr = Object.entries(snapshot.val());
+    list.innerHTML = '';
+  
+    for (let i = 0; i < itemArr.length; i++) {
+      let currentItem = itemArr[i];
+      addItem(currentItem);
+    }
+  } else {
+    list.innerHTML = '';
   }
+
 })
+
+
+
 
 function clear() {
   inputVal.value = '';
@@ -40,7 +48,6 @@ btn.addEventListener('click', () => {
 })
 
 function addItem(item) {
-  // list.innerHTML += `<li>${itemValue}</li>`;
   let itemID = item[0]
   let li = document.createElement('li');
   li.textContent = item[1];
